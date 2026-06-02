@@ -183,10 +183,11 @@ test("buildGrokSessionEndHookJson quotes handler paths for shell command", () =>
     notifyGrokHandlerPath: "/tmp/Token Tracker's/bin/grok-session-end-hook.cjs",
   });
 
-  assert.equal(
-    hookJson.hooks.SessionEnd[0].hooks[0].command,
-    "/usr/bin/env node '/tmp/Token Tracker'\\''s/bin/grok-session-end-hook.cjs'",
-  );
+  const expected =
+    process.platform === "win32"
+      ? `node "/tmp/Token Tracker's/bin/grok-session-end-hook.cjs"`
+      : `/usr/bin/env node '/tmp/Token Tracker'\\''s/bin/grok-session-end-hook.cjs'`;
+  assert.equal(hookJson.hooks.SessionEnd[0].hooks[0].command, expected);
 });
 
 test("upsertGrokHook writes handler to canonical tokentracker bin dir", async () => {

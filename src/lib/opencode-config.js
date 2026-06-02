@@ -3,6 +3,7 @@ const path = require("node:path");
 const fs = require("node:fs/promises");
 
 const { ensureDir } = require("./fs");
+const { isWindows } = require("./runtime");
 
 const DEFAULT_PLUGIN_NAME = "tokentracker.js";
 const PLUGIN_MARKER = "TOKENTRACKER_PLUGIN";
@@ -32,7 +33,7 @@ function buildOpencodePlugin({ notifyPath }) {
     `      if (!event || event.type !== ${JSON.stringify(DEFAULT_EVENT)}) return;\n` +
     `      try {\n` +
     `        if (!notifyPath) return;\n` +
-    `        const proc = $\`/usr/bin/env node ${"${notifyPath}"} --source=opencode\`;\n` +
+    `        const proc = $\`${isWindows() ? "node" : "/usr/bin/env node"} ${"${notifyPath}"} --source=opencode\`;\n` +
     `        if (proc && typeof proc.catch === 'function') proc.catch(() => {});\n` +
     `      } catch (_) {}\n` +
     `    }\n` +

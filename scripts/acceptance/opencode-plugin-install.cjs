@@ -55,11 +55,15 @@ async function main() {
     console.error(`Expected opencode plugin to use ${DEFAULT_EVENT} event.`);
     process.exit(1);
   }
-  if (!pluginBody.includes("const proc = $`/usr/bin/env node ")) {
-    console.error("Expected opencode plugin to use an unescaped `$` template command.");
+  const expectedPrefix = process.platform === "win32"
+    ? "const proc = $`node "
+    : "const proc = $`/usr/bin/env node ";
+  if (!pluginBody.includes(expectedPrefix)) {
+    console.error(`Expected opencode plugin to use an unescaped \`$\` template command starting with: ${expectedPrefix}`);
     process.exit(1);
   }
-  if (pluginBody.includes("const proc = $\\`/usr/bin/env node ")) {
+  const escapedPrefix = expectedPrefix.replace("`", "\\`");
+  if (pluginBody.includes(escapedPrefix)) {
     console.error("Unexpected escaped backtick in opencode plugin command.");
     process.exit(1);
   }

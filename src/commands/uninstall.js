@@ -15,6 +15,7 @@ const { removeOpenclawHookConfig } = require("../lib/openclaw-hook");
 const { removeOpenclawSessionPluginConfig } = require("../lib/openclaw-session-plugin");
 const { removeGrokHook } = require("../lib/grok-hook");
 const { resolveTrackerPaths } = require("../lib/tracker-paths");
+const { nodeCommandArray } = require("../lib/runtime");
 
 async function cmdUninstall(argv) {
   const opts = parseArgs(argv);
@@ -33,8 +34,8 @@ async function cmdUninstall(argv) {
   const notifyPath = path.join(binDir, "notify.cjs");
   const notifyOriginalPath = path.join(trackerDir, "codex_notify_original.json");
   const codeNotifyOriginalPath = path.join(trackerDir, "code_notify_original.json");
-  const codexNotifyCmd = ["/usr/bin/env", "node", notifyPath];
-  const codeNotifyCmd = ["/usr/bin/env", "node", notifyPath, "--source=every-code"];
+  const codexNotifyCmd = nodeCommandArray(notifyPath);
+  const codeNotifyCmd = nodeCommandArray(notifyPath, "every-code");
   const claudeHookCommand = buildClaudeHookCommand(notifyPath);
   const codebuddyHookCommand = buildHookCommand(notifyPath, "codebuddy");
   const geminiHookCommand = buildGeminiHookCommand(notifyPath);

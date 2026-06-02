@@ -13,6 +13,7 @@ const {
   chmod600IfPossible,
 } = require("../lib/fs");
 const { prompt, promptHidden } = require("../lib/prompt");
+const { nodeCommandArray } = require("../lib/runtime");
 const {
   upsertCodexNotify,
   upsertEveryCodeNotify,
@@ -364,8 +365,8 @@ function buildIntegrationTargets({ home, trackerDir, notifyPath }) {
   const codeConfigPath = path.join(codeHome, "config.toml");
   const notifyOriginalPath = path.join(trackerDir, "codex_notify_original.json");
   const codeNotifyOriginalPath = path.join(trackerDir, "code_notify_original.json");
-  const notifyCmd = ["/usr/bin/env", "node", notifyPath];
-  const codeNotifyCmd = ["/usr/bin/env", "node", notifyPath, "--source=every-code"];
+  const notifyCmd = nodeCommandArray(notifyPath);
+  const codeNotifyCmd = nodeCommandArray(notifyPath, "every-code");
   const claudeDir = path.join(home, ".claude");
   const claudeSettingsPath = path.join(claudeDir, "settings.json");
   const claudeHookCommand = buildClaudeHookCommand(notifyPath);

@@ -3,6 +3,8 @@ const path = require("node:path");
 const fs = require("node:fs/promises");
 const fssync = require("node:fs");
 
+const { nodeCommandString } = require("./runtime");
+
 const GROK_HOOK_FILENAME = "99-tokentracker-usage.json";
 
 function resolveGrokHome(env = process.env) {
@@ -34,7 +36,7 @@ function resolveLegacyTrackerBinDir(trackerDir) {
 function buildGrokSessionEndHookJson({ notifyGrokHandlerPath }) {
   // The command runs our dedicated handler.
   // We pass the session id and cwd via environment variables that Grok already sets.
-  const cmd = `/usr/bin/env node ${shellQuote(notifyGrokHandlerPath)}`;
+  const cmd = nodeCommandString(notifyGrokHandlerPath);
   return {
     hooks: {
       SessionEnd: [
@@ -50,10 +52,6 @@ function buildGrokSessionEndHookJson({ notifyGrokHandlerPath }) {
       ]
     }
   };
-}
-
-function shellQuote(value) {
-  return `'${String(value).replace(/'/g, "'\\''")}'`;
 }
 
 async function ensureGrokHookFiles({
